@@ -1,0 +1,43 @@
+═══════════════════════════════════════════
+  إعداد AI البحث بالصورة — خطوة بخطوة
+═══════════════════════════════════════════
+
+الخطوة ١: إنشاء جدول صور الرحلات
+──────────────────────────────────
+١. افتح supabase.com → مشروعك
+٢. SQL Editor → New query
+٣. الصق هذا الكود وشغّله:
+
+create table if not exists trip_photos (
+  id bigint generated always as identity primary key,
+  public_url text not null,
+  caption text,
+  client_name text,
+  trip_name text,
+  trip_date text,
+  created_at timestamptz default now()
+);
+alter table trip_photos enable row level security;
+create policy "public read" on trip_photos for select using (true);
+create policy "anon all" on trip_photos for all using (true) with check (true);
+
+الخطوة ٢: إنشاء Edge Function
+──────────────────────────────
+١. في Supabase → Edge Functions → Create new function
+٢. اسمها: face-search
+٣. انسخ كود ملف EDGE_FUNCTION_CODE.ts كاملاً والصقه
+٤. اضغط Deploy
+
+الخطوة ٣: إضافة Anthropic API Key
+───────────────────────────────────
+١. في Supabase → Edge Functions → face-search → Settings
+٢. أضف Environment Variable:
+   Name:  ANTHROPIC_API_KEY
+   Value: مفتاحك من console.anthropic.com
+
+الخطوة ٤: رفع صور الرحلات
+──────────────────────────
+من لوحة الإدارة في Supabase → Table Editor → trip_photos
+أضف صور رحلاتك مع اسم الرحلة وتاريخها
+
+✅ خلاص! ميزة البحث بالصورة شغّالة حقيقي
